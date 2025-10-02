@@ -10,6 +10,7 @@ public class Main {
 
     public Main() {
         sc = new Scanner(System.in);
+
     }
 
     public void ejecutar() throws Exception {
@@ -64,8 +65,28 @@ public class Main {
      * @return true si esta balanceada, false si no
      */
     public boolean verificarBalanceo(String s) {
-        // TODO: completar 
-        return false;
+        PilaGenerica<Character> pila = new PilaGenerica<>(s.length());
+        int contador = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if(c == '(' || c == '[' || c =='{'){
+                pila.Push(c);
+                contador ++;
+            } else if(c == ')' ||c == ']'||c == '}'){
+                if (pila.getSize() == 0){
+                        return false;
+                }
+    
+                char top = pila.Pop();
+                contador --;
+    
+                if((c == ')' && top != '(') || (c == ']' && top != '[') || (c == '}' && top != '{')){
+                    return false;
+                }
+            }
+
+        }
+        return contador == 0;
     }
 
     /**
@@ -74,7 +95,29 @@ public class Main {
      * @param objetivo suma objetivo
      */
     public void encontrarParesConSuma(int[] numeros, int objetivo) {
-        // TODO: completar
+        try {
+            TablasHash tabla = new TablasHash(numeros.length * 2);
+            for (int i = 0; i < numeros.length; i++) {
+                int num = numeros[i];
+                int complemento = objetivo - num;
+                
+                int claveNum = (num % tabla.getSize() + tabla.getSize()) % tabla.getSize();
+                int claveComplemento = (complemento % tabla.getSize() + tabla.getSize()) % tabla.getSize();
+
+                if(tabla.search(claveComplemento, complemento)){
+                    if(num < complemento){
+                        System.out.println("(" + num + "," + complemento+")");
+                    } else if(num > complemento){
+                        System.out.println("(" + complemento + "," + num+")");
+                    }
+                }
+
+                tabla.insert(claveNum, num);
+            }    
+        } catch (Exception e) {
+            System.out.println("Ocurrió un error.");
+
+        }
     }
 
     public static void main(String[] args) throws Exception {
